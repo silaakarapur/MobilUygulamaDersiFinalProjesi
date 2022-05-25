@@ -2,14 +2,10 @@ package com.example.afinal
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 
-import android.view.View
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
@@ -17,37 +13,25 @@ import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.activity_menu2.*
 import kotlinx.android.synthetic.main.alert_tasarim.*
 import kotlinx.android.synthetic.main.fragment_toast.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
-val dosyayolu = "com.example.afinal"
-var anahtarisim = "isimid"
-var anahtarno = "numaraid"
-var booleankey = "switchid"
+
+
 
 class MainActivity2 : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main2)
-        var prefences = getSharedPreferences(dosyayolu, MODE_PRIVATE)
-        var editor = prefences.edit()
-        val savedBoolean = prefences.getBoolean(booleankey, false)
-        var isim = prefences.getString(anahtarisim, null)
-        var numara = prefences.getInt(anahtarno, 0)
-        switchid.isChecked = savedBoolean
-        isimid.setText(isim.toString())
-//numaraid.setText(numara.toString().toInt())
 
-//  numaraid.setText(enumValueOf<TextView>(numara.toString()) )
+
+ //numaraid.setText(numara.toString().toInt())
+ //  numaraid.setText(enumValueOf<TextView>(numara.toString()) )
 
 
 
 
 
 
-
+loadData()
 
 
 
@@ -66,35 +50,48 @@ class MainActivity2 : AppCompatActivity() {
                 ad.setMessage("Alanlar boş bırakılamaz")
                 ad.create().show()
 
-
+                saveData()
             } else if (isimid.text.toString() == gelendeger && numaraid.text.toString() == gelendeger2) {
-                editor.putString(anahtarisim, isimid.text.toString())
-                editor.putInt(anahtarno, numaraid.text.toString().toInt())
-                editor.putBoolean(booleankey, switchid.isChecked)
-                editor.apply()
 
-                Toast.makeText(this, "Kaydedildi", Toast.LENGTH_LONG).show()
 
                 val tasarim = layoutInflater.inflate(R.layout.alert_tasarim, null)
-                val ad = AlertDialog.Builder(this@MainActivity2)
+                val ad: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this@MainActivity2)
+             //   val ad = AlertDialog.Builder(this@MainActivity2)
                 ad.setView(tasarim)
-                ad.create().show()
+                ad.setMessage("3")
+                val alert: android.app.AlertDialog = ad.create()
+                alert.show()
 
-
-                var gerisay = object : CountDownTimer(6000, 100) {
-
+                object : CountDownTimer(4000, 1000) {
                     override fun onTick(p0: Long) {
+                        alert.setMessage((p0 / 1000).toString())
 
-                        sayac2.text = (p0 / 1000).toString()
 
                     }
 
                     override fun onFinish() {
-
+                        val intent = Intent(this@MainActivity2, MenuActivity2::class.java)
+                        startActivity(intent)
                     }
 
-                }
-                gerisay.start()
+                }.start()
+//                ad.create().show()
+//
+//
+////                var gerisay = object : CountDownTimer(6000, 100) {
+////
+////                    override fun onTick(p0: Long) {
+////
+////                        sayac2.text = (p0 / 1000).toString()
+////
+////                    }
+////
+////                    override fun onFinish() {
+////
+////                    }
+////
+////                }
+////                gerisay.start()
 
 
             } else {
@@ -119,6 +116,29 @@ class MainActivity2 : AppCompatActivity() {
         }
 
 
+
+    }
+    private fun saveData(){
+        val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.apply{
+            putString("STRING_KEY", adsoyad.toString())
+            putString("INT_KEY", numara.toString())
+            putBoolean("BOOLEAN_KEY", switchid.isChecked)
+
+        }.apply()
+        Toast.makeText(this, "başarılı", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun loadData(){
+        val sharedPreferences = getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE)
+        val savedString = sharedPreferences.getString("STRING_KEY", null)
+        val savedInt = sharedPreferences.getString("INT_KEY", null)
+        val savedboolean = sharedPreferences.getBoolean("BOOLEAN_KEY", false)
+
+        isimid.setText(savedString)
+            numaraid.setText(savedInt)
+        switchid.isChecked = savedboolean
     }
 
 //    private fun savedata() {
